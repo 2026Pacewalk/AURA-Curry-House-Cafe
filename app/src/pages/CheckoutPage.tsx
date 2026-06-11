@@ -14,6 +14,13 @@ const orderTypeConfig: Record<OrderType, { label: string; icon: typeof Truck; de
   dineIn: { label: 'Dine-In', icon: UtensilsCrossed, desc: 'Eat at the restaurant' },
 };
 
+interface PlacedOrder {
+  items: Array<{ id: number; name: string; price: number; quantity: number }>;
+  subtotal: number;
+  tax: number;
+  total: number;
+}
+
 export default function CheckoutPage() {
   const { items, subtotal, clearCart } = useCart();
   const [orderType, setOrderType] = useState<OrderType>('pickup');
@@ -23,11 +30,22 @@ export default function CheckoutPage() {
   });
   const [placed, setPlaced] = useState(false);
   const [orderId, setOrderId] = useState<number | null>(null);
+  const [placedOrder, setPlacedOrder] = useState<PlacedOrder | null>(null);
   const tax = subtotal * 0.1;
   const total = subtotal + tax;
 
   const createOrder = trpc.order.create.useMutation({
-    onSuccess: (data) => { setOrderId(data.id); setPlaced(true); clearCart(); },
+    onSuccess: (data) => {
+      // Snapshot the cart before clearing it so the confirmation screen
+      // and WhatsApp message still have the order contents.
+      setPlacedOrder({
+        items: items.map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity })),
+        subtotal, tax, total,
+      });
+      setOrderId(data.id);
+      setPlaced(true);
+      clearCart();
+    },
   });
 
   const updateField = (key: string, val: string) => setForm(p => ({ ...p, [key]: val }));
@@ -44,14 +62,12 @@ export default function CheckoutPage() {
       customerAddress: orderType === 'delivery' ? form.address : undefined,
       deliveryType: orderType,
       notes,
-      items: items.map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity, isVeg: i.isVeg })),
-      subtotal: subtotal.toFixed(2),
-      tax: tax.toFixed(2),
-      total: total.toFixed(2),
+      items: items.map(i => ({ id: i.id, quantity: i.quantity })),
     });
   };
 
   const sendToWhatsApp = () => {
+    if (!placedOrder) return;
     const config = orderTypeConfig[orderType];
     const lines = [
       `*New Order - Aura Curry House Cafe*`,
@@ -68,15 +84,15 @@ export default function CheckoutPage() {
       if (form.tableNotes) lines.push(`*Table Notes:* ${form.tableNotes}`);
     }
     lines.push(``, `*Order Items:*`);
-    items.forEach(i => lines.push(`- ${i.name} x${i.quantity} = $${(i.price * i.quantity).toFixed(2)}`));
-    lines.push(``, `*Subtotal:* $${subtotal.toFixed(2)}`, `*GST (10%):* $${tax.toFixed(2)}`, `*Total:* $${total.toFixed(2)}`);
+    placedOrder.items.forEach(i => lines.push(`- ${i.name} x${i.quantity} = $${(i.price * i.quantity).toFixed(2)}`));
+    lines.push(``, `*Subtotal:* $${placedOrder.subtotal.toFixed(2)}`, `*GST (10%):* $${placedOrder.tax.toFixed(2)}`, `*Total:* $${placedOrder.total.toFixed(2)}`);
     if (form.notes) lines.push(`*Notes:* ${form.notes}`);
 
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank');
   };
 
   // ─── Order Placed Success Screen ───
-  if (placed && orderId) {
+  if (placed && orderId && placedOrder) {
     return (
       <div className="min-h-screen flex items-center justify-center px-5 pt-6">
         <div className="max-w-sm w-full text-center">
@@ -97,9 +113,9 @@ export default function CheckoutPage() {
                 <p className="text-parchment text-[12px] font-medium">{orderTypeConfig[orderType].label}</p>
                 <p className="text-sand text-[10px]">{orderType === 'dineIn' ? `${form.guests} guests` : orderType === 'delivery' ? form.address : 'Collect at store'}</p>
               </div>
-              <span className="ml-auto text-gold text-[14px] font-display font-semibold">${total.toFixed(2)}</span>
+              <span className="ml-auto text-gold text-[14px] font-display font-semibold">${placedOrder.total.toFixed(2)}</span>
             </div>
-            {items.map(i => (
+            {placedOrder.items.map(i => (
               <div key={i.id} className="flex justify-between text-[11px] py-0.5">
                 <span className="text-parchment">{i.name} <span className="text-sand">x{i.quantity}</span></span>
                 <span className="text-sand">${(i.price * i.quantity).toFixed(2)}</span>
@@ -250,6 +266,13 @@ export default function CheckoutPage() {
               <textarea value={form.notes} onChange={e => updateField('notes', e.target.value)}
                 className="w-full bg-transparent border rounded-xl text-parchment text-[14px] px-4 py-3.5 outline-none focus:border-gold transition-colors placeholder:text-[rgba(168,155,140,0.3)] resize-none"
                 style={{ borderColor: 'rgba(245,240,232,0.1)' }} rows={2} placeholder="Any special instructions..." />
+            </div>
+          )}
+
+          {/* Error */}
+          {createOrder.isError && (
+            <div className="text-red-400 text-[13px] bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-2.5">
+              Could not place your order. Please try again or call us on (07) 2140 1757.
             </div>
           )}
 

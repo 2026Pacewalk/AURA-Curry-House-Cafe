@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { Search, ShoppingCart, Menu, X } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 import MobileMenu from './MobileMenu';
@@ -7,7 +7,17 @@ import MobileMenu from './MobileMenu';
 export default function MobileHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [query, setQuery] = useState('');
   const { totalItems } = useCart();
+  const navigate = useNavigate();
+
+  const submitSearch = () => {
+    const q = query.trim();
+    if (!q) return;
+    navigate(`/menu?q=${encodeURIComponent(q)}`);
+    setSearchOpen(false);
+    setQuery('');
+  };
 
   return (
     <>
@@ -70,9 +80,13 @@ export default function MobileHeader() {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-sand" />
               <input
-                type="text"
+                type="search"
                 placeholder="Search for food..."
                 autoFocus
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') submitSearch(); }}
+                enterKeyHint="search"
                 className="w-full rounded-xl text-parchment text-[15px] pl-10 pr-4 py-3 outline-none placeholder:text-[rgba(168,155,140,0.35)]"
                 style={{ background: 'rgba(245,240,232,0.06)', border: '1px solid rgba(245,240,232,0.1)' }}
               />

@@ -1,5 +1,5 @@
-import { useState, useMemo, useRef } from 'react';
-import { Link } from 'react-router';
+import { useState, useMemo, useRef, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router';
 import { Search, Plus, Minus, Leaf, Flame, ShoppingCart, ChevronUp, X, ArrowRight } from 'lucide-react';
 import { trpc } from '@/providers/trpc';
 import { useCart } from '@/hooks/useCart';
@@ -15,12 +15,19 @@ const catIcons: Record<string, string> = {
 };
 
 export default function MobileMenuPage() {
+  const [searchParams] = useSearchParams();
   const [activeCat, setActiveCat] = useState<number | 'all'>('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') ?? '');
   const [vegOnly, setVegOnly] = useState(false);
   const [showCart, setShowCart] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
   const cartScrollRef = useRef<HTMLDivElement>(null);
+
+  // Keep in sync when a search is submitted from the header while already on /menu
+  useEffect(() => {
+    const q = searchParams.get('q');
+    if (q !== null) setSearchQuery(q);
+  }, [searchParams]);
 
   const { data: categories } = trpc.category.list.useQuery();
   const { data: menuItems } = trpc.menu.listAvailable.useQuery();
@@ -184,8 +191,8 @@ export default function MobileMenuPage() {
             <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2.5">
               {cartItems.map(item => (
                 <div key={item.id} className="flex items-center gap-3 p-2.5 rounded-xl" style={{ background: '#111' }}>
-                  <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0">
-                    <img src={item.image || ''} alt={item.name} className="w-full h-full object-cover" />
+                  <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-[rgba(245,240,232,0.05)]">
+                    {item.image && <img src={item.image} alt={item.name} className="w-full h-full object-cover" />}
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="text-parchment text-[12px] font-medium truncate">{item.name}</h4>
@@ -231,7 +238,7 @@ export default function MobileMenuPage() {
 function FoodCard({ item, cartItems, addItem, updateQuantity }: {
   item: { id: number; name: string; description: string | null; price: string; isVeg: boolean; spiceLevel: number; isBestSeller: boolean; isFeatured: boolean; categoryId: number; image: string | null };
   cartItems: Array<{ id: number; quantity: number }>;
-  addItem: (i: { id: number; name: string; price: number; isVeg: boolean }) => void;
+  addItem: (i: { id: number; name: string; price: number; isVeg: boolean; image?: string }) => void;
   updateQuantity: (id: number, q: number) => void;
 }) {
   const qty = cartItems.find(c => c.id === item.id)?.quantity || 0;
@@ -274,7 +281,7 @@ function FoodCard({ item, cartItems, addItem, updateQuantity }: {
           <span className="text-gold text-[15px] font-display font-semibold">${item.price}</span>
           {qty === 0 ? (
             <button
-              onClick={() => addItem({ id: item.id, name: item.name, price: Number(item.price), isVeg: item.isVeg })}
+              onClick={() => addItem({ id: item.id, name: item.name, price: Number(item.price), isVeg: item.isVeg, image: img })}
               className="flex items-center gap-1 px-4 py-1.5 rounded-lg text-[11px] font-bold tracking-wider bg-gold text-dark active:scale-95 transition-transform shadow-lg"
             >
               <Plus className="w-3 h-3" /> ADD

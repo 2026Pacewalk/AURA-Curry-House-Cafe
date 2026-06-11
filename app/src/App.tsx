@@ -9,6 +9,7 @@ import HomePage from './pages/HomePage';
 import MenuPage from './pages/MenuPage';
 import CheckoutPage from './pages/CheckoutPage';
 import AdminPage from './pages/AdminPage';
+import NotFound from './pages/NotFound';
 
 /* Mobile Components */
 import MobileHeader from './components/mobile/MobileHeader';
@@ -26,6 +27,7 @@ function DesktopLayout() {
           <Route path="/menu" element={<MenuPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/admin" element={<AdminPage />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       <Footer />
@@ -43,6 +45,7 @@ function MobileLayout() {
           <Route path="/menu" element={<MenuPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/admin" element={<AdminPage />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       <MobileBottomNav />

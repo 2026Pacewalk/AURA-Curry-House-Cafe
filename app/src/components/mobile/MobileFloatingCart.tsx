@@ -40,8 +40,8 @@ export default function MobileFloatingCart() {
             <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2">
               {items.map(item => (
                 <div key={item.id} className="flex items-center gap-3 p-2.5 rounded-xl" style={{ background: '#111' }}>
-                  <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0">
-                    <img src={item.image || ''} alt={item.name} className="w-full h-full object-cover" />
+                  <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-[rgba(245,240,232,0.05)]">
+                    {item.image && <img src={item.image} alt={item.name} className="w-full h-full object-cover" />}
                   </div>
                   <div className="flex-1 min-w-0"><h4 className="text-parchment text-[11px] truncate">{item.name}</h4><span className="text-gold text-[11px]">${item.price.toFixed(2)}</span></div>
                   <div className="flex items-center gap-0 rounded-lg overflow-hidden" style={{ border: '1px solid rgba(245,240,232,0.08)' }}>

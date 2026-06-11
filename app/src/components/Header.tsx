@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { Phone, ChevronDown, Menu, X, ShoppingCart } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 
@@ -10,6 +10,7 @@ export default function Header() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { totalItems } = useCart();
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -54,9 +55,9 @@ export default function Header() {
               <div key={link.label} className="relative" ref={link.label === 'MENU' ? dropdownRef : undefined}>
                 {link.label === 'MENU' ? (
                   <>
-                    <button onClick={() => { setMenuDropdown(p => !p); }} onMouseEnter={() => setMenuDropdown(true)}
+                    <button onClick={() => { setMenuDropdown(false); navigate('/menu'); }} onMouseEnter={() => setMenuDropdown(true)}
                       className="flex items-center gap-1 text-[11px] font-medium tracking-[0.12em] text-parchment hover:text-gold transition-colors py-2">
-                      <Link to="/menu" onClick={(e) => e.preventDefault()}>{link.label}</Link>
+                      {link.label}
                       <ChevronDown className={`w-3 h-3 transition-transform ${menuDropdown ? 'rotate-180' : ''}`} />
                     </button>
                     {menuDropdown && (
@@ -75,7 +76,7 @@ export default function Header() {
                   </>
                 ) : (
                   link.to.startsWith('/#') ? (
-                    <a href={link.to.slice(1)} className="text-[11px] font-medium tracking-[0.12em] text-parchment hover:text-gold transition-colors">
+                    <a href={link.to} className="text-[11px] font-medium tracking-[0.12em] text-parchment hover:text-gold transition-colors">
                       {link.label}
                     </a>
                   ) : (

@@ -289,7 +289,7 @@ function OrdersTab() {
                   <td className="p-2.5 text-gold">${Number(o.total).toFixed(2)}</td>
                   <td className="p-2.5"><span className={`px-1.5 py-0.5 rounded-sm text-[9px] font-medium capitalize ${ORDER_STATUS_COLORS[o.status]}`}>{o.status}</span></td>
                   <td className="p-2.5 text-sand">{new Date(o.createdAt).toLocaleDateString()}</td>
-                  <td className="p-2.5"><select value={o.status} onChange={e => updateStatus.mutate({ id: o.id, status: e.target.value as any })}
+                  <td className="p-2.5"><select value={o.status} onChange={e => updateStatus.mutate({ id: o.id, status: e.target.value as 'new' | 'accepted' | 'preparing' | 'ready' | 'completed' | 'cancelled' })}
                     className="bg-transparent border rounded text-[10px] px-1.5 py-1 text-parchment outline-none" style={{ borderColor: 'rgba(245,240,232,0.1)' }}>
                     {['new', 'accepted', 'preparing', 'ready', 'completed', 'cancelled'].map(s => <option key={s} value={s} className="bg-[#111]">{s}</option>)}
                   </select></td>

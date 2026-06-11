@@ -141,7 +141,7 @@ const features = [
                   <p className="text-sand text-[11px] leading-snug mb-3 line-clamp-2 h-[30px]">{item.description || 'Authentic Indian delicacy'}</p>
                   <div className="flex items-center justify-between">
                     <span className="font-display text-gold text-lg font-semibold">${item.price}</span>
-                    <button onClick={() => addItem({ id: item.id, name: item.name, price: Number(item.price), isVeg: item.isVeg, image: item.image || '' })}
+                    <button onClick={() => addItem({ id: item.id, name: item.name, price: Number(item.price), isVeg: item.isVeg, image: item.image || `/images/cat-${categories?.find(c => c.id === item.categoryId)?.slug || 'south-indian'}.jpg` })}
                       className="w-8 h-8 rounded-full border flex items-center justify-center text-gold hover:bg-gold hover:text-dark transition-colors" style={{ borderColor: 'rgba(201,168,76,0.4)' }}>
                       <Plus className="w-3.5 h-3.5" />
                     </button>
@@ -217,7 +217,7 @@ const features = [
               </div>
               <div>
                 <label className="text-sand text-[11px] uppercase tracking-wider mb-1.5 block">Date *</label>
-                <input type="date" value={resForm.date} onChange={e => setResForm({ ...resForm, date: e.target.value })}
+                <input type="date" value={resForm.date} min={new Date().toISOString().split('T')[0]} onChange={e => setResForm({ ...resForm, date: e.target.value })}
                   className="w-full bg-transparent border rounded-lg text-parchment text-[14px] px-4 py-3 outline-none focus:border-gold transition-colors"
                   style={{ borderColor: 'rgba(245,240,232,0.1)', colorScheme: 'dark' }} />
               </div>

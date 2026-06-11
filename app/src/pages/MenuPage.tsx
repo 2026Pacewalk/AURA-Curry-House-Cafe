@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { Link } from 'react-router';
+import { useState, useMemo, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router';
 import { Search, Plus, Minus, ShoppingCart, Leaf, Flame, X, ChevronUp } from 'lucide-react';
 import { trpc } from '@/providers/trpc';
 import { useCart } from '@/hooks/useCart';
@@ -13,10 +13,16 @@ export default function MenuPage() {
 }
 
 function MenuPageDesktop() {
+  const [searchParams] = useSearchParams();
   const [activeCat, setActiveCat] = useState<number | 'all'>('all');
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(() => searchParams.get('q') ?? '');
   const [vegOnly, setVegOnly] = useState(false);
   const [showCart, setShowCart] = useState(false);
+
+  useEffect(() => {
+    const q = searchParams.get('q');
+    if (q !== null) setSearch(q);
+  }, [searchParams]);
   const { data: categories } = trpc.category.list.useQuery();
   const { data: menuItems } = trpc.menu.listAvailable.useQuery();
   const { items: cartItems, addItem, updateQuantity, totalItems, subtotal } = useCart();
@@ -127,16 +133,17 @@ function MenuPageDesktop() {
 function MenuItemCard({ item, cartItems, addItem, updateQuantity }: {
   item: { id: number; name: string; description: string | null; price: string; isVeg: boolean; spiceLevel: number; isBestSeller: boolean; isFeatured: boolean; image: string | null; categoryId: number };
   cartItems: Array<{ id: number; quantity: number }>;
-  addItem: (i: { id: number; name: string; price: number; isVeg: boolean }) => void;
+  addItem: (i: { id: number; name: string; price: number; isVeg: boolean; image?: string }) => void;
   updateQuantity: (id: number, q: number) => void;
 }) {
   const cartItem = cartItems.find(c => c.id === item.id);
   const qty = cartItem?.quantity || 0;
+  const img = item.image || `/images/cat-${['quick-snacks','south-indian','north-indian','indo-chinese','biryani','desserts','beverages'][item.categoryId - 1] || 'south-indian'}.jpg`;
 
   return (
     <div className="card-lux flex gap-3.5 p-3.5 rounded-xl">
       <div className="relative w-24 h-24 shrink-0 rounded-lg overflow-hidden group">
-        <img src={item.image || `/images/cat-${['quick-snacks','south-indian','north-indian','indo-chinese','biryani','desserts','beverages'][item.categoryId - 1] || 'south-indian'}.jpg`} alt={item.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
+        <img src={img} alt={item.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
         {item.isBestSeller && <div className="absolute top-1 left-1 px-2 py-0.5 rounded-full text-[7px] font-bold text-dark tracking-[0.1em]" style={{ background: 'var(--gold-grad)' }}>BEST</div>}
       </div>
       <div className="flex-1 min-w-0 flex flex-col">
@@ -155,7 +162,7 @@ function MenuItemCard({ item, cartItems, addItem, updateQuantity }: {
         )}
         <div className="mt-auto">
         {qty === 0 ? (
-          <button onClick={() => addItem({ id: item.id, name: item.name, price: Number(item.price), isVeg: item.isVeg })}
+          <button onClick={() => addItem({ id: item.id, name: item.name, price: Number(item.price), isVeg: item.isVeg, image: img })}
             className="btn-gold w-full rounded-md py-2 text-[11px] font-semibold tracking-[0.12em]">
             ADD
           </button>
@@ -198,8 +205,8 @@ function CartPanel({ onClose }: { onClose: () => void }) {
             <div className="space-y-3">
               {items.map(item => (
                 <div key={item.id} className="flex items-center gap-3 p-2 rounded-lg" style={{ background: '#111' }}>
-                  <div className="w-12 h-12 rounded-md overflow-hidden shrink-0">
-                    <img src={item.image || ''} alt={item.name} className="w-full h-full object-cover" />
+                  <div className="w-12 h-12 rounded-md overflow-hidden shrink-0 bg-[rgba(245,240,232,0.05)]">
+                    {item.image && <img src={item.image} alt={item.name} className="w-full h-full object-cover" />}
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="text-parchment text-[12px] font-medium truncate">{item.name}</h4>

@@ -105,7 +105,7 @@ export default function MobileHome() {
                 <p className="text-sand text-[9px] line-clamp-1 mt-0.5">{item.description || 'Authentic Indian'}</p>
                 <div className="flex items-center justify-between mt-1.5">
                   <span className="text-gold text-[13px] font-display font-semibold">${item.price}</span>
-                  <button onClick={() => addItem({ id: item.id, name: item.name, price: Number(item.price), isVeg: item.isVeg })}
+                  <button onClick={() => addItem({ id: item.id, name: item.name, price: Number(item.price), isVeg: item.isVeg, image: item.image || catIcons[['quick-snacks','south-indian','north-indian','indo-chinese','biryani','desserts','beverages'][item.categoryId - 1]] })}
                     className="px-3 py-1 rounded-md text-[10px] font-semibold bg-gold text-dark active:scale-95 transition-transform">ADD</button>
                 </div>
               </div>
@@ -139,7 +139,7 @@ export default function MobileHome() {
                 )}
                 <div className="flex items-center justify-between mt-1.5">
                   <span className="text-gold text-[14px] font-display font-semibold">${item.price}</span>
-                  <button onClick={() => addItem({ id: item.id, name: item.name, price: Number(item.price), isVeg: item.isVeg })}
+                  <button onClick={() => addItem({ id: item.id, name: item.name, price: Number(item.price), isVeg: item.isVeg, image: item.image || catIcons[['quick-snacks','south-indian','north-indian','indo-chinese','biryani','desserts','beverages'][item.categoryId - 1]] })}
                     className="px-3 py-1 rounded-md text-[10px] font-semibold tracking-wider bg-gold text-dark active:scale-95 transition-transform">ADD</button>
                 </div>
               </div>

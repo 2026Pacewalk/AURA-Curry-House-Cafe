@@ -52,7 +52,7 @@ export default function Footer() {
               {quickLinks.map(link => (
                 <li key={link.label}>
                   {link.to.startsWith('/#') ? (
-                    <a href={link.to.slice(1)} className="text-sand text-[11px] hover:text-gold transition-colors">{link.label}</a>
+                    <a href={link.to} className="text-sand text-[11px] hover:text-gold transition-colors">{link.label}</a>
                   ) : (
                     <Link to={link.to} className="text-sand text-[11px] hover:text-gold transition-colors">{link.label}</Link>
                   )}

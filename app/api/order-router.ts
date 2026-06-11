@@ -1,8 +1,11 @@
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 import { createRouter, publicQuery, adminQuery } from "./middleware";
 import { getDb } from "./queries/connection";
-import { orders } from "@db/schema";
-import { eq, desc } from "drizzle-orm";
+import { orders, menuItems } from "@db/schema";
+import { eq, desc, inArray } from "drizzle-orm";
+
+const GST_RATE = 0.1;
 
 export const orderRouter = createRouter({
   list: adminQuery.query(async () => {
@@ -29,34 +32,51 @@ export const orderRouter = createRouter({
 
   create: publicQuery
     .input(z.object({
-      customerName: z.string().min(1),
-      customerMobile: z.string().min(1),
-      customerAddress: z.string().optional(),
+      customerName: z.string().min(1).max(200),
+      customerMobile: z.string().min(1).max(40),
+      customerAddress: z.string().max(500).optional(),
       deliveryType: z.enum(["delivery", "pickup", "dineIn"]).default("pickup"),
-      notes: z.string().optional(),
+      notes: z.string().max(1000).optional(),
       items: z.array(z.object({
-        id: z.number(),
-        name: z.string(),
-        price: z.number(),
-        quantity: z.number(),
-        isVeg: z.boolean(),
-      })),
-      subtotal: z.string(),
-      tax: z.string().default("0"),
-      total: z.string(),
+        id: z.number().int().positive(),
+        quantity: z.number().int().min(1).max(99),
+      })).min(1),
     }))
     .mutation(async ({ input }) => {
       const db = getDb();
+
+      // Never trust client-side prices: look the items up and price the
+      // order from the database.
+      const ids = [...new Set(input.items.map(i => i.id))];
+      const dbItems = await db.select().from(menuItems)
+        .where(inArray(menuItems.id, ids));
+      const byId = new Map(dbItems.map(i => [i.id, i]));
+
+      const priced = input.items.map(({ id, quantity }) => {
+        const item = byId.get(id);
+        if (!item || !item.isAvailable) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: `Item ${item?.name ?? `#${id}`} is no longer available`,
+          });
+        }
+        return { id, name: item.name, price: Number(item.price), quantity, isVeg: item.isVeg };
+      });
+
+      const subtotal = priced.reduce((sum, i) => sum + i.price * i.quantity, 0);
+      const tax = subtotal * GST_RATE;
+      const total = subtotal + tax;
+
       const result = await db.insert(orders).values({
         customerName: input.customerName,
         customerMobile: input.customerMobile,
         customerAddress: input.customerAddress,
         deliveryType: input.deliveryType,
         notes: input.notes,
-        items: input.items,
-        subtotal: input.subtotal,
-        tax: input.tax,
-        total: input.total,
+        items: priced,
+        subtotal: subtotal.toFixed(2),
+        tax: tax.toFixed(2),
+        total: total.toFixed(2),
       });
       return { id: Number(result[0].insertId) };
     }),

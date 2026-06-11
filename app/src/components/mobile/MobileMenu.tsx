@@ -142,6 +142,8 @@ export default function MobileMenu({ open, onClose }: Props) {
           </a>
           <a
             href="https://wa.me/61412345678"
+            target="_blank"
+            rel="noopener noreferrer"
             className="flex flex-col items-center gap-2 py-4 rounded-xl"
             style={{ background: 'rgba(37,211,102,0.08)', border: '1px solid rgba(37,211,102,0.15)' }}
           >
@@ -150,6 +152,8 @@ export default function MobileMenu({ open, onClose }: Props) {
           </a>
           <a
             href="https://maps.google.com/?q=3/16+Bryants+Rd+Shailer+Park+QLD+4128"
+            target="_blank"
+            rel="noopener noreferrer"
             className="flex flex-col items-center gap-2 py-4 rounded-xl"
             style={{ background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.15)' }}
           >
