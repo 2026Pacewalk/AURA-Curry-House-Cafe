@@ -45,7 +45,16 @@
       "Bash(PORT=4000 NODE_ENV=production node dist/boot.js)",
       "Bash(curl -s \"http://localhost:4000/api/trpc/ping\")",
       "Bash(curl -s \"http://localhost:4000/api/trpc/menu.list\")",
-      "Bash(curl -s \"http://localhost:4000/\")"
+      "Bash(curl -s \"http://localhost:4000/\")",
+      "Bash(railway login *)",
+      "Bash(railway whoami *)",
+      "Bash(railway init *)",
+      "Bash(railway add *)",
+      "Bash(railway status *)",
+      "Bash(railway up *)",
+      "Bash(railway variables *)",
+      "Bash(railway domain *)",
+      "Bash(railway logs *)"
     ]
   }
 }
