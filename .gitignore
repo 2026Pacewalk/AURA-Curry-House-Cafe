@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+build/
+**/dist/
+**/dist-ssr/
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+**/.env
+**/.env.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
+
+# OS / editor
+.DS_Store
+*.suo
+*.tsbuildinfo
+
+# Local tooling
+mysql-local/

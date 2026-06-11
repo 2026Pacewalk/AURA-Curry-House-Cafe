@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm -v)",
+      "Bash(ls node_modules)",
+      "Bash(ls db/migrations db/kimi)",
+      "Bash(ls api/lib api/queries api/kimi)",
+      "Bash(ls -la .env)",
+      "Bash(npm install *)",
+      "PowerShell(winget search MySQL --source winget 2>$null)",
+      "Bash(echo \"=== npm install \\(tail\\) ===\"; tail -5 \"C:\\\\Users\\\\hello\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\E--Aura-Curry-Website\\\\009aabc7-b5be-4768-bbde-0ddbc1aa7cfb\\\\tasks\\\\bxs0dbw6r.output\" 2>/dev/null; echo; echo \"=== mysql zip size ===\"; ls -la \"E:/mysql-local/mysql-8.4.9-winx64.zip\" 2>/dev/null || echo \"not yet\")",
+      "PowerShell($dir = \"E:\\\\mysql-local\"; $zip = \"$dir\\\\mysql-8.4.9-winx64.zip\"; Write-Output \"Extracting...\"; $ProgressPreference='SilentlyContinue'; Expand-Archive -Path $zip -DestinationPath $dir -Force; Write-Output \"Extracted. Contents:\"; Get-ChildItem $dir | Select-Object Name | Format-Table -AutoSize | Out-String)",
+      "PowerShell($base = \"E:\\\\mysql-local\\\\mysql-8.4.9-winx64\"; $data = \"E:\\\\mysql-local\\\\data\"; $mysqld = \"$base\\\\bin\\\\mysqld.exe\"; if \\(Test-Path $data\\) { Remove-Item -Recurse -Force $data }; Write-Output \"Initializing data dir \\(insecure\\)...\"; & $mysqld --no-defaults --initialize-insecure \"--basedir=$base\" \"--datadir=$data\"; Write-Output \\(\"mysqld init exit code: \" + $LASTEXITCODE\\); if \\(Test-Path $data\\) { Write-Output \"Data dir created:\"; Get-ChildItem $data | Select-Object -First 5 Name | Format-Table -AutoSize | Out-String })",
+      "PowerShell(Write-Output \"=== listeners on 3306 ===\"; Get-NetTCPConnection -LocalPort 3306 -State Listen -ErrorAction SilentlyContinue | Select-Object LocalAddress,LocalPort,OwningProcess | Format-Table -AutoSize | Out-String; Get-NetTCPConnection -LocalPort 3306 -State Listen -ErrorAction SilentlyContinue | ForEach-Object { Get-Process -Id $_.OwningProcess -ErrorAction SilentlyContinue } | Select-Object Id,ProcessName,Path | Format-Table -AutoSize | Out-String; Write-Output \"=== mysql-ish services ===\"; Get-Service | Where-Object { $_.Name -match 'mysql|maria' } | Select-Object Name,Status,DisplayName | Format-Table -AutoSize | Out-String)",
+      "PowerShell($free = -not \\(Get-NetTCPConnection -LocalPort 3307 -State Listen -ErrorAction SilentlyContinue\\); Write-Output \\(\"3307 free: \" + $free\\))",
+      "Bash(npx drizzle-kit *)",
+      "Bash(npx tsx *)",
+      "Bash(npm run *)",
+      "Bash(curl -s \"http://localhost:3001/api/trpc/ping\")",
+      "Bash(curl -s \"http://localhost:3001/api/trpc/menu.getMenu\")",
+      "Bash(curl -s \"http://localhost:3001/\")",
+      "Bash(curl -s \"http://localhost:3002/api/trpc/ping\")",
+      "Bash(curl -s \"http://localhost:3002/api/trpc/menu.getMenu\")",
+      "Bash(curl -s \"http://localhost:3002/api/trpc/menu.list\")",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(npx tsc *)",
+      "Bash(npx vite *)",
+      "mcp__Claude_in_Chrome__list_connected_browsers",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "mcp__Claude_in_Chrome__resize_window",
+      "mcp__Claude_in_Chrome__navigate",
+      "mcp__Claude_in_Chrome__computer",
+      "mcp__Claude_in_Chrome__browser_batch",
+      "Bash(git --version)",
+      "Bash(gh auth *)",
+      "Bash(git config *)",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(grep -c \"\\\\.env$\")"
+    ]
+  }
+}
