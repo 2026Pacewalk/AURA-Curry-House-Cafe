@@ -1,5 +1,9 @@
+import { eq } from "drizzle-orm";
+import { createRequire } from "module";
 import { getDb } from "../api/queries/connection";
 import { categories, menuItems, settings } from "./schema";
+
+const require = createRequire(import.meta.url);
 
 async function seed() {
   const db = getDb();
@@ -66,6 +70,20 @@ async function seed() {
   ]);
 
   console.log("Settings seeded");
+
+  // Attach dish photos (sourced separately into scripts/dish-image-map.json).
+  try {
+    const imageMap: Record<string, string> = require("../scripts/dish-image-map.json");
+    let n = 0;
+    for (const [id, image] of Object.entries(imageMap)) {
+      await db.update(menuItems).set({ image }).where(eq(menuItems.id, Number(id)));
+      n++;
+    }
+    console.log(`Dish images applied: ${n}`);
+  } catch {
+    console.log("No dish-image-map.json found; skipping image attach");
+  }
+
   console.log("Seed complete!");
 }
 

@@ -2,7 +2,7 @@ import { Link } from 'react-router';
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { BookOpen, ShoppingBag, CalendarDays, Award, Utensils, Star, Leaf, ChevronLeft, ChevronRight, Plus, Flame, Users, PartyPopper } from 'lucide-react';
+import { BookOpen, ShoppingBag, CalendarDays, Award, Utensils, Star, Leaf, ArrowRight, Plus, Flame, Users, PartyPopper } from 'lucide-react';
 import { trpc } from '@/providers/trpc';
 import { useCart } from '@/hooks/useCart';
 import { useIsMobile } from '@/hooks/useIsMobile';
@@ -255,48 +255,30 @@ const features = [
 
 /* ═══ Categories Carousel Sub-component ═══ */
 function CategoriesSection({ categories }: { categories: Array<{ id: number; name: string; slug: string; description: string | null; image: string | null }> }) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [canLeft, setCanLeft] = useState(false);
-  const [canRight, setCanRight] = useState(true);
-
-  const check = () => {
-    const el = scrollRef.current;
-    if (!el) return;
-    setCanLeft(el.scrollLeft > 10);
-    setCanRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10);
-  };
-
-  const scroll = (dir: number) => {
-    scrollRef.current?.scrollBy({ left: dir * 260, behavior: 'smooth' });
-    setTimeout(check, 400);
-  };
-
   return (
     <section className="py-20 md:py-28 px-4 md:px-8 lg:px-[60px]" style={{ background: '#0a0a0a' }}>
       <div className="max-w-[1400px] mx-auto">
-        <div className="flex flex-col items-center text-center mb-14">
-          <span className="animate-in eyebrow text-2xl mb-2">Explore Our</span>
-          <h2 className="animate-in font-display text-parchment text-3xl md:text-[2.6rem] tracking-wide leading-tight">POPULAR CATEGORIES</h2>
-          <div className="animate-in gold-rule mt-5" />
-        </div>
-        <div className="relative">
-          {canLeft && <button onClick={() => scroll(-1)} className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-[rgba(15,15,15,0.9)] border border-[rgba(245,240,232,0.1)] flex items-center justify-center text-parchment hover:text-gold transition-colors"><ChevronLeft className="w-4 h-4" /></button>}
-          <div ref={scrollRef} onScroll={check} className="flex gap-4 overflow-x-auto hide-scrollbar snap-x snap-mandatory pb-3">
-            {(categories || []).map(cat => (
-              <Link to="/menu" key={cat.id} className="animate-in snap-start shrink-0 group cursor-pointer" style={{ width: '230px' }}>
-                <div className="relative overflow-hidden rounded-xl mb-4 h-[300px] ring-1 ring-[rgba(201,168,76,0.08)] group-hover:ring-[rgba(201,168,76,0.35)] transition-all">
-                  <img src={cat.image || `/images/cat-${cat.slug}.jpg`} alt={cat.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/25 to-transparent" />
-                  <div className="absolute inset-0 bg-gold/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div className="absolute bottom-0 left-0 right-0 p-4 text-center">
-                    <h3 className="font-display text-parchment text-[15px] tracking-[0.08em] group-hover:text-gold transition-colors">{cat.name.toUpperCase()}</h3>
-                    <p className="text-sand text-[10.5px] mt-1 leading-snug">{cat.description}</p>
-                  </div>
-                </div>
-              </Link>
-            ))}
+        <div className="animate-in flex items-end justify-between mb-12">
+          <div>
+            <span className="eyebrow text-2xl block mb-1">Explore Our</span>
+            <h2 className="font-display text-parchment text-3xl md:text-[2.6rem] tracking-wide leading-none">Categories</h2>
           </div>
-          {canRight && <button onClick={() => scroll(1)} className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-[rgba(15,15,15,0.9)] border border-[rgba(245,240,232,0.1)] flex items-center justify-center text-parchment hover:text-gold transition-colors"><ChevronRight className="w-4 h-4" /></button>}
+          <Link to="/menu" className="group flex items-center gap-1.5 text-gold text-[13px] font-medium tracking-wide">
+            See All <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-7 gap-4 lg:gap-6">
+          {(categories || []).map(cat => (
+            <Link to={`/menu?cat=${cat.slug}`} key={cat.id} className="animate-in group flex flex-col items-center gap-3.5 cursor-pointer">
+              <div className="relative w-full aspect-square rounded-full overflow-hidden ring-1 ring-[rgba(201,168,76,0.18)] transition-all duration-300 group-hover:ring-2 group-hover:ring-gold/70" style={{ boxShadow: '0 12px 30px -16px rgba(0,0,0,0.8)' }}>
+                <img src={cat.image || `/images/cat-${cat.slug}.jpg`} alt={cat.name} className="w-full h-full object-cover transition-transform duration-[800ms] ease-out group-hover:scale-[1.12]" loading="lazy" />
+                <div className="absolute inset-0 rounded-full" style={{ boxShadow: 'inset 0 -34px 44px -22px rgba(10,10,10,0.85)' }} />
+                <div className="absolute inset-0 rounded-full bg-gold/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+              <span className="text-parchment text-[13px] xl:text-[15px] font-medium text-center tracking-wide group-hover:text-gold transition-colors">{cat.name}</span>
+            </Link>
+          ))}
         </div>
       </div>
     </section>

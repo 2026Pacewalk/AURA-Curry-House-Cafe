@@ -33,6 +33,15 @@ export default function MobileMenuPage() {
   const { data: menuItems } = trpc.menu.listAvailable.useQuery();
   const { items: cartItems, addItem, updateQuantity, totalItems, subtotal } = useCart();
 
+  // Pre-select a category when arriving via /menu?cat=<slug>
+  useEffect(() => {
+    const slug = searchParams.get('cat');
+    if (slug && categories) {
+      const match = categories.find(c => c.slug === slug);
+      if (match) setActiveCat(match.id);
+    }
+  }, [searchParams, categories]);
+
   // Filter items
   const filtered = useMemo(() => {
     let list = menuItems || [];
@@ -72,7 +81,7 @@ export default function MobileMenuPage() {
             onChange={e => setSearchQuery(e.target.value)}
             onFocus={() => setSearchFocused(true)}
             onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
-            className="w-full rounded-xl text-parchment text-[13px] pl-9 pr-9 py-3 outline-none placeholder:text-[rgba(168,155,140,0.35)] transition-all"
+            className="w-full rounded-full text-parchment text-[13px] pl-10 pr-9 py-3 outline-none placeholder:text-[rgba(168,155,140,0.35)] transition-all"
             style={{ background: 'rgba(245,240,232,0.05)', border: searchFocused ? '1px solid rgba(201,168,76,0.4)' : '1px solid rgba(245,240,232,0.08)' }}
           />
           {searchQuery && (
@@ -89,14 +98,15 @@ export default function MobileMenuPage() {
           {/* Veg Toggle */}
           <button
             onClick={() => setVegOnly(!vegOnly)}
-            className={`snap-start shrink-0 flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-medium tracking-wider transition-all ${vegOnly ? 'bg-green-500/15 text-green-400 border border-green-500/30' : 'text-sand border border-[rgba(245,240,232,0.08)]'}`}
+            className={`snap-start shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-full text-[10px] font-semibold tracking-[0.1em] transition-all ${vegOnly ? 'bg-green-500/15 text-green-400 border border-green-500/40' : 'text-sand border border-[rgba(245,240,232,0.1)]'}`}
           >
             <Leaf className="w-3 h-3" /> VEG
           </button>
 
           <button
             onClick={() => setActiveCat('all')}
-            className={`snap-start shrink-0 px-3 py-1.5 rounded-lg text-[10px] font-medium tracking-wider transition-all ${activeCat === 'all' ? 'bg-gold text-dark' : 'text-sand border border-[rgba(245,240,232,0.08)]'}`}
+            className={`snap-start shrink-0 px-4 py-1.5 rounded-full text-[10px] font-semibold tracking-[0.1em] transition-all ${activeCat === 'all' ? 'text-dark' : 'text-sand border border-[rgba(245,240,232,0.1)]'}`}
+            style={activeCat === 'all' ? { background: 'var(--gold-grad)' } : {}}
           >
             ALL
           </button>
@@ -105,7 +115,8 @@ export default function MobileMenuPage() {
             <button
               key={cat.id}
               onClick={() => setActiveCat(cat.id)}
-              className={`snap-start shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-medium tracking-wider transition-all whitespace-nowrap ${activeCat === cat.id ? 'bg-gold text-dark' : 'text-sand border border-[rgba(245,240,232,0.08)]'}`}
+              className={`snap-start shrink-0 flex items-center gap-1.5 px-4 py-1.5 rounded-full text-[10px] font-semibold tracking-[0.1em] transition-all whitespace-nowrap ${activeCat === cat.id ? 'text-dark' : 'text-sand border border-[rgba(245,240,232,0.1)]'}`}
+              style={activeCat === cat.id ? { background: 'var(--gold-grad)' } : {}}
             >
               {cat.name.toUpperCase()}
             </button>
@@ -123,13 +134,16 @@ export default function MobileMenuPage() {
           </div>
         ) : (
           grouped.map(({ cat, items }) => (
-            <div key={cat.id} className="mb-6" ref={el => { catRefs.current[cat.id] = el; }}>
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-7 h-7 rounded-lg overflow-hidden shrink-0">
+            <div key={cat.id} className="mb-7" ref={el => { catRefs.current[cat.id] = el; }}>
+              <div className="flex items-center gap-3 mb-3.5">
+                <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 ring-1 ring-[rgba(201,168,76,0.3)]">
                   <img src={catIcons[cat.slug] || ''} alt={cat.name} className="w-full h-full object-cover" loading="lazy" />
                 </div>
-                <h2 className="text-parchment text-[14px] font-semibold tracking-wide">{cat.name}</h2>
-                <span className="text-sand text-[10px]">({items.length})</span>
+                <div>
+                  <span className="eyebrow text-[13px] block leading-none">{items.length} dishes</span>
+                  <h2 className="font-display text-parchment text-[18px] tracking-wide leading-tight">{cat.name}</h2>
+                </div>
+                <span className="h-px flex-1 bg-gradient-to-r from-gold/30 to-transparent" />
               </div>
               <div className="space-y-2.5">
                 {items.map(item => (
@@ -246,51 +260,47 @@ function FoodCard({ item, cartItems, addItem, updateQuantity }: {
   const img = item.image || catIcons[slugs[item.categoryId - 1]] || '';
 
   return (
-    <div className="flex gap-3 p-2.5 rounded-xl" style={{ background: '#111', border: '1px solid rgba(245,240,232,0.04)' }}>
+    <div className="card-lux flex gap-3 p-2.5 rounded-2xl">
       {/* Image */}
-      <div className="relative w-[90px] h-[90px] rounded-lg overflow-hidden shrink-0 self-center">
+      <div className="relative w-[104px] h-[104px] rounded-xl overflow-hidden shrink-0 self-center">
         <img src={img} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#111]/40 to-transparent" />
-        {/* Tags - top right */}
-        <div className="absolute top-1.5 right-1.5 flex flex-col gap-1 items-end">
-          {item.isBestSeller && <span className="px-1.5 py-0.5 rounded-[3px] text-[7px] font-bold tracking-wider bg-[#c9a84c] text-white shadow-md">BESTSELLER</span>}
-          {item.isFeatured && !item.isBestSeller && <span className="px-1.5 py-0.5 rounded-[3px] text-[7px] font-bold tracking-wider bg-[#8B6914] text-white shadow-md">CHEF&apos;S</span>}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#100e0b]/70 via-transparent to-transparent" />
+        {/* Veg dot - top left */}
+        <div className="absolute top-1.5 left-1.5 w-4 h-4 rounded-[3px] flex items-center justify-center" style={{ background: 'rgba(10,10,10,0.6)', border: `1px solid ${item.isVeg ? '#22c55e' : '#ef4444'}` }}>
+          <div className={`w-2 h-2 rounded-full ${item.isVeg ? 'bg-green-500' : 'bg-red-500'}`} />
         </div>
+        {/* Tag - bottom */}
+        {item.isBestSeller && <span className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded-full text-[7px] font-bold tracking-[0.1em] text-dark shadow-md" style={{ background: 'var(--gold-grad)' }}>BESTSELLER</span>}
+        {item.isFeatured && !item.isBestSeller && <span className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded-full text-[7px] font-bold tracking-[0.1em] text-parchment shadow-md" style={{ background: 'rgba(10,10,10,0.7)', border: '1px solid rgba(201,168,76,0.5)' }}>CHEF&apos;S</span>}
       </div>
 
       {/* Content */}
-      <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
-        <div>
-          <div className="flex items-center gap-1.5 mb-0.5">
-            {item.isVeg ? (
-              <div className="w-3.5 h-3.5 border border-green-500 rounded-[2px] flex items-center justify-center shrink-0"><div className="w-2 h-2 rounded-full bg-green-500" /></div>
-            ) : (
-              <div className="w-3.5 h-3.5 border border-red-500 rounded-[2px] flex items-center justify-center shrink-0"><div className="w-2 h-2 rounded-full bg-red-500" /></div>
-            )}
-            <h3 className="text-parchment text-[13px] font-medium truncate">{item.name}</h3>
-          </div>
-          <p className="text-sand text-[10px] line-clamp-2 leading-snug">{item.description || 'Authentic Indian preparation'}</p>
+      <div className="flex-1 min-w-0 flex flex-col py-0.5">
+        <div className="flex items-start justify-between gap-2">
+          <h3 className="font-display text-parchment text-[14px] tracking-wide leading-tight flex-1">{item.name}</h3>
           {item.spiceLevel > 0 && (
-            <div className="flex gap-0.5 mt-1">
-              {[1,2,3].map(i => <Flame key={i} className={`w-2.5 h-2.5 ${i <= item.spiceLevel ? 'text-red-400' : 'text-[rgba(245,240,232,0.08)]'}`} />)}
+            <div className="flex gap-0.5 shrink-0 mt-0.5">
+              {[1,2,3].map(i => <Flame key={i} className={`w-2.5 h-2.5 ${i <= item.spiceLevel ? 'text-red-400 fill-red-400/30' : 'text-[rgba(245,240,232,0.1)]'}`} />)}
             </div>
           )}
         </div>
+        <p className="text-sand text-[10.5px] line-clamp-2 leading-relaxed mt-0.5">{item.description || 'Authentic Indian preparation'}</p>
 
-        <div className="flex items-center justify-between mt-1.5">
-          <span className="text-gold text-[15px] font-display font-semibold">${item.price}</span>
+        <div className="flex items-center justify-between mt-auto pt-2">
+          <span className="text-gold text-[16px] font-display font-semibold">${item.price}</span>
           {qty === 0 ? (
             <button
               onClick={() => addItem({ id: item.id, name: item.name, price: Number(item.price), isVeg: item.isVeg, image: img })}
-              className="flex items-center gap-1 px-4 py-1.5 rounded-lg text-[11px] font-bold tracking-wider bg-gold text-dark active:scale-95 transition-transform shadow-lg"
+              className="flex items-center gap-1 px-5 py-1.5 rounded-full text-[11px] font-bold tracking-[0.12em] text-dark active:scale-95 transition-transform shadow-md"
+              style={{ background: 'var(--gold-grad)' }}
             >
               <Plus className="w-3 h-3" /> ADD
             </button>
           ) : (
-            <div className="flex items-center rounded-lg overflow-hidden" style={{ border: '1px solid rgba(201,168,76,0.3)' }}>
-              <button onClick={() => updateQuantity(item.id, qty - 1)} className="w-8 h-8 flex items-center justify-center bg-[rgba(245,240,232,0.06)]"><Minus className="w-3.5 h-3.5 text-parchment" /></button>
-              <div className="w-8 h-8 bg-gold text-dark flex items-center justify-center text-[12px] font-bold">{qty}</div>
-              <button onClick={() => updateQuantity(item.id, qty + 1)} className="w-8 h-8 flex items-center justify-center bg-[rgba(245,240,232,0.06)]"><Plus className="w-3.5 h-3.5 text-parchment" /></button>
+            <div className="flex items-center rounded-full overflow-hidden" style={{ background: 'var(--gold-grad)' }}>
+              <button onClick={() => updateQuantity(item.id, qty - 1)} className="w-8 h-8 flex items-center justify-center text-dark active:bg-black/10"><Minus className="w-3.5 h-3.5" /></button>
+              <div className="w-7 h-8 text-dark flex items-center justify-center text-[13px] font-bold">{qty}</div>
+              <button onClick={() => updateQuantity(item.id, qty + 1)} className="w-8 h-8 flex items-center justify-center text-dark active:bg-black/10"><Plus className="w-3.5 h-3.5" /></button>
             </div>
           )}
         </div>

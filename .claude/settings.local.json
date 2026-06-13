@@ -59,7 +59,27 @@
       "Bash(curl -s --max-time 12 __TRACKED_VAR__/api/trpc/category.list)",
       "Bash(npm test *)",
       "Bash(curl -s -X POST \"http://localhost:5050/api/trpc/order.create\" -H \"Content-Type: application/json\" -d '{\"json\":{\"customerName\":\"Test User\",\"customerMobile\":\"0400000000\",\"deliveryType\":\"pickup\",\"items\":[{\"id\":1,\"quantity\":2}],\"price\":\"0.01\",\"total\":\"0.01\"}}')",
-      "Bash(curl -s -X POST \"http://localhost:5050/api/trpc/order.create\" -H \"Content-Type: application/json\" -d '{\"json\":{\"customerName\":\"Hacker\",\"customerMobile\":\"0400000000\",\"deliveryType\":\"pickup\",\"items\":[{\"id\":9999,\"quantity\":1}]}}')"
+      "Bash(curl -s -X POST \"http://localhost:5050/api/trpc/order.create\" -H \"Content-Type: application/json\" -d '{\"json\":{\"customerName\":\"Hacker\",\"customerMobile\":\"0400000000\",\"deliveryType\":\"pickup\",\"items\":[{\"id\":9999,\"quantity\":1}]}}')",
+      "Bash(curl -s -o /dev/null -w '%{http_code}\\\\n' --max-time 10 -H 'Accept: text/html' https://aura-web-production-28f6.up.railway.app/menu)",
+      "Bash(curl -s --max-time 10 -H 'Accept: text/html' https://aura-web-production-28f6.up.railway.app/menu)",
+      "Bash(curl -s --max-time 20 \"https://unsplash.com/napi/search/photos?query=butter%20chicken&per_page=2\" -H \"Accept: application/json\" -H \"User-Agent: Mozilla/5.0\")",
+      "Bash(node -e \"let d='';process.stdin.on\\('data',c=>d+=c\\).on\\('end',\\(\\)=>{try{const j=JSON.parse\\(d\\);console.log\\('total:',j.total\\);console.log\\('first urls.regular:',j.results?.[0]?.urls?.regular?.slice\\(0,90\\)\\);console.log\\('desc:',j.results?.[0]?.alt_description\\);}catch\\(e\\){console.log\\('FAIL',e.message,d.slice\\(0,150\\)\\)}}\\)\")",
+      "Bash(curl -s --max-time 20 \"https://www.themealdb.com/api/json/v1/1/search.php?s=butter%20chicken\")",
+      "Bash(node -e \"let d='';process.stdin.on\\('data',c=>d+=c\\).on\\('end',\\(\\)=>{try{const j=JSON.parse\\(d\\);console.log\\(\\(j.meals||[]\\).slice\\(0,3\\).map\\(m=>m.strMeal+' -> '+m.strMealThumb\\).join\\('\\\\n'\\)||'none'\\)}catch\\(e\\){console.log\\('FAIL',e.message\\)}}\\)\")",
+      "Bash(curl -s --max-time 20 \"https://www.themealdb.com/api/json/v1/1/filter.php?a=Indian\")",
+      "Bash(node -e \"let d='';process.stdin.on\\('data',c=>d+=c\\).on\\('end',\\(\\)=>{try{const j=JSON.parse\\(d\\);console.log\\('count:',\\(j.meals||[]\\).length\\);console.log\\(\\(j.meals||[]\\).slice\\(0,12\\).map\\(m=>m.strMeal\\).join\\(' | '\\)\\)}catch\\(e\\){console.log\\('FAIL',e.message\\)}}\\)\")",
+      "Bash(mkdir -p src/data)",
+      "Bash(node scripts/fetch-dish-images.mjs)",
+      "Bash(node -e \"const m=require\\('./scripts/dish-image-map.json'\\);console.log\\(Object.keys\\(m\\).length+' ids:',Object.keys\\(m\\).join\\(','\\)\\)\")",
+      "Bash(curl -s -o /dev/null -w \"localhost:5050 -> %{http_code}\\\\n\" --max-time 8 \"http://localhost:5050/\")",
+      "mcp__32e86509-b8b3-4582-827e-7a97ce68666d__models_explore",
+      "mcp__32e86509-b8b3-4582-827e-7a97ce68666d__generate_image",
+      "mcp__32e86509-b8b3-4582-827e-7a97ce68666d__job_display",
+      "Bash(curl -s --max-time 30 -o \"/tmp/test-butter-chicken.png\" \"https://d8j0ntlcm91z4.cloudfront.net/user_3BzOthVeZhGUT8BUJD9ecHD4Nrv/hf_20260613_163341_4c1dc4c6-fbf7-4588-b91e-36a8f73e55d7.png\")",
+      "Read(//tmp/**)",
+      "Bash(curl -s --max-time 30 -o \"preview-test.png\" \"https://d8j0ntlcm91z4.cloudfront.net/user_3BzOthVeZhGUT8BUJD9ecHD4Nrv/hf_20260613_163341_4c1dc4c6-fbf7-4588-b91e-36a8f73e55d7.png\")",
+      "mcp__32e86509-b8b3-4582-827e-7a97ce68666d__show_generations",
+      "Bash(node scripts/apply-generated-images.mjs)"
     ]
   }
 }

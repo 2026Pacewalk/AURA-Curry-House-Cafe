@@ -1,16 +1,13 @@
-import { useState, useEffect, useRef } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router';
-import { Phone, ChevronDown, Menu, X, ShoppingCart } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router';
+import { Phone, Menu, X, ShoppingCart } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [menuDropdown, setMenuDropdown] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const { totalItems } = useCart();
   const location = useLocation();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -18,17 +15,7 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setMenuDropdown(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  useEffect(() => { setMobileOpen(false); setMenuDropdown(false); }, [location.pathname]);
+  useEffect(() => { setMobileOpen(false); }, [location.pathname]);
 
   const navLinks = [
     { label: 'HOME', to: '/' },
@@ -37,8 +24,6 @@ export default function Header() {
     { label: 'RESERVE', to: '/#reserve' },
     { label: 'CONTACT', to: '/#footer' },
   ];
-
-  const menuCats = ['Quick Snacks','South Indian','North Indian','Indo Chinese','Biryani','Desserts','Beverages'];
 
   return (
     <>
@@ -52,40 +37,15 @@ export default function Header() {
 
           <nav className="hidden lg:flex items-center gap-6">
             {navLinks.map((link) => (
-              <div key={link.label} className="relative" ref={link.label === 'MENU' ? dropdownRef : undefined}>
-                {link.label === 'MENU' ? (
-                  <>
-                    <button onClick={() => { setMenuDropdown(false); navigate('/menu'); }} onMouseEnter={() => setMenuDropdown(true)}
-                      className="flex items-center gap-1 text-[11px] font-medium tracking-[0.12em] text-parchment hover:text-gold transition-colors py-2">
-                      {link.label}
-                      <ChevronDown className={`w-3 h-3 transition-transform ${menuDropdown ? 'rotate-180' : ''}`} />
-                    </button>
-                    {menuDropdown && (
-                      <div className="absolute top-full left-0 pt-1" onMouseEnter={() => setMenuDropdown(true)} onMouseLeave={() => setMenuDropdown(false)}>
-                        <div className="h-2 w-full" />
-                        <div className="rounded-lg p-3 min-w-[200px]" style={{ background: 'rgba(15,15,15,0.98)', border: '1px solid rgba(245,240,232,0.08)' }}>
-                          {menuCats.map(cat => (
-                            <Link key={cat} to="/menu" onClick={() => setMenuDropdown(false)}
-                              className="block px-3 py-1.5 text-[12px] text-sand hover:text-gold hover:bg-[rgba(201,168,76,0.05)] rounded transition-colors">
-                              {cat}
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  link.to.startsWith('/#') ? (
-                    <a href={link.to} className="text-[11px] font-medium tracking-[0.12em] text-parchment hover:text-gold transition-colors">
-                      {link.label}
-                    </a>
-                  ) : (
-                    <Link to={link.to} className="text-[11px] font-medium tracking-[0.12em] text-parchment hover:text-gold transition-colors">
-                      {link.label}
-                    </Link>
-                  )
-                )}
-              </div>
+              link.to.startsWith('/#') ? (
+                <a key={link.label} href={link.to} className="text-[11px] font-medium tracking-[0.12em] text-parchment hover:text-gold transition-colors">
+                  {link.label}
+                </a>
+              ) : (
+                <Link key={link.label} to={link.to} className="text-[11px] font-medium tracking-[0.12em] text-parchment hover:text-gold transition-colors">
+                  {link.label}
+                </Link>
+              )
             ))}
           </nav>
 

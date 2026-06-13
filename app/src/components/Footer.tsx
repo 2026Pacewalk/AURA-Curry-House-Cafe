@@ -98,6 +98,8 @@ export default function Footer() {
             <span className="text-[rgba(245,240,232,0.15)]">|</span>
             <span className="text-sand">Terms & Conditions</span>
             <span className="text-[rgba(245,240,232,0.15)]">|</span>
+            <Link to="/credits" className="text-sand hover:text-gold transition-colors">Photo Credits</Link>
+            <span className="text-[rgba(245,240,232,0.15)]">|</span>
             <span className="text-sand">Designed by PACEWALK</span>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { Flame, Clock, Star, ArrowRight, Bike, Store } from 'lucide-react';
+import { Flame, Clock, Star, ArrowRight, Bike, Store, Phone } from 'lucide-react';
 import { trpc } from '@/providers/trpc';
 import { useCart } from '@/hooks/useCart';
 
@@ -149,11 +149,11 @@ export default function MobileHome() {
       </div>
 
       {/* Reservation Banner */}
-      <div className="mt-7 mx-3 p-5 rounded-2xl relative overflow-hidden" style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.12), rgba(201,168,76,0.02))', border: '1px solid rgba(201,168,76,0.18)' }}>
+      <div id="reserve" className="mt-7 mx-3 p-5 rounded-2xl relative overflow-hidden scroll-mt-[68px]" style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.12), rgba(201,168,76,0.02))', border: '1px solid rgba(201,168,76,0.18)' }}>
         <p className="eyebrow text-base mb-0.5">Book a Table</p>
         <h3 className="font-display text-parchment text-[19px] mb-1.5">Reserve Your Experience</h3>
-        <p className="text-sand text-[11.5px] mb-4 leading-relaxed">Book your table for a memorable dining experience.</p>
-        <a href="/#reserve" className="btn-gold inline-block rounded-lg px-6 py-2.5 text-[11px] font-semibold tracking-[0.12em]">BOOK NOW</a>
+        <p className="text-sand text-[11.5px] mb-4 leading-relaxed">Call us to book your table for a memorable dining experience.</p>
+        <a href="tel:0721401757" className="btn-gold inline-flex items-center gap-2 rounded-lg px-6 py-2.5 text-[11px] font-semibold tracking-[0.12em]"><Phone className="w-3.5 h-3.5" /> CALL TO BOOK</a>
       </div>
 
       {/* Quick Info */}

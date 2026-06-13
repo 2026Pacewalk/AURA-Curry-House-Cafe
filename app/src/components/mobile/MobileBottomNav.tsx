@@ -1,16 +1,26 @@
 import { Link, useLocation } from 'react-router';
-import { Home, UtensilsCrossed, ClipboardList, Tag, Phone } from 'lucide-react';
+import { Home, UtensilsCrossed, CalendarDays, ShoppingCart, Phone } from 'lucide-react';
+import { useCart } from '@/hooks/useCart';
 
-const tabs = [
-  { icon: Home, label: 'Home', to: '/' },
-  { icon: UtensilsCrossed, label: 'Menu', to: '/menu' },
-  { icon: ClipboardList, label: 'Orders', to: '#' },
-  { icon: Tag, label: 'Offers', to: '#' },
-  { icon: Phone, label: 'Contact', to: 'tel:0721401757' },
+type Tab = {
+  icon: typeof Home;
+  label: string;
+  to: string;
+  kind: 'route' | 'hash' | 'tel';
+  badge?: boolean;
+};
+
+const tabs: Tab[] = [
+  { icon: Home, label: 'Home', to: '/', kind: 'route' },
+  { icon: UtensilsCrossed, label: 'Menu', to: '/menu', kind: 'route' },
+  { icon: CalendarDays, label: 'Reserve', to: '/#reserve', kind: 'hash' },
+  { icon: ShoppingCart, label: 'Cart', to: '/checkout', kind: 'route', badge: true },
+  { icon: Phone, label: 'Call', to: 'tel:0721401757', kind: 'tel' },
 ];
 
 export default function MobileBottomNav() {
   const location = useLocation();
+  const { totalItems } = useCart();
 
   return (
     <nav
@@ -25,30 +35,32 @@ export default function MobileBottomNav() {
     >
       <div className="flex items-center justify-around h-[60px]">
         {tabs.map((tab) => {
-          const isActive = location.pathname === tab.to;
-          const isExternal = tab.to.startsWith('tel:');
+          const isActive =
+            tab.kind === 'route' && location.pathname === tab.to;
 
           const inner = (
             <div className="flex flex-col items-center justify-center gap-[3px] relative min-w-[48px] min-h-[48px]">
               {isActive && (
-                <div
-                  className="absolute -top-[1px] w-5 h-[2px] rounded-full"
-                  style={{ background: '#c9a84c' }}
-                />
+                <div className="absolute -top-[1px] w-5 h-[2px] rounded-full" style={{ background: '#c9a84c' }} />
               )}
-              <tab.icon
-                className={`w-5 h-5 transition-colors ${isActive ? 'text-gold' : 'text-[#8d8073]'}`}
-                strokeWidth={isActive ? 2.2 : 1.5}
-              />
-              <span
-                className={`text-[9px] tracking-[0.06em] transition-colors ${isActive ? 'text-gold font-semibold' : 'text-[#8d8073]'}`}
-              >
+              <div className="relative">
+                <tab.icon
+                  className={`w-5 h-5 transition-colors ${isActive ? 'text-gold' : 'text-[#8d8073]'}`}
+                  strokeWidth={isActive ? 2.2 : 1.5}
+                />
+                {tab.badge && totalItems > 0 && (
+                  <span className="absolute -top-1.5 -right-2 min-w-[15px] h-[15px] px-1 bg-gold text-dark text-[8px] font-bold rounded-full flex items-center justify-center border border-[#080808]">
+                    {totalItems}
+                  </span>
+                )}
+              </div>
+              <span className={`text-[9px] tracking-[0.06em] transition-colors ${isActive ? 'text-gold font-semibold' : 'text-[#8d8073]'}`}>
                 {tab.label}
               </span>
             </div>
           );
 
-          return isExternal ? (
+          return tab.kind === 'tel' ? (
             <a key={tab.label} href={tab.to} className="flex justify-center items-center">
               {inner}
             </a>
