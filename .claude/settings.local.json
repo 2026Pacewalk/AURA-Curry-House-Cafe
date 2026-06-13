@@ -80,7 +80,8 @@
       "Bash(curl -s --max-time 30 -o \"preview-test.png\" \"https://d8j0ntlcm91z4.cloudfront.net/user_3BzOthVeZhGUT8BUJD9ecHD4Nrv/hf_20260613_163341_4c1dc4c6-fbf7-4588-b91e-36a8f73e55d7.png\")",
       "mcp__32e86509-b8b3-4582-827e-7a97ce68666d__show_generations",
       "Bash(node scripts/apply-generated-images.mjs)",
-      "Bash(node scripts/apply-category-images.mjs)"
+      "Bash(node scripts/apply-category-images.mjs)",
+      "Bash(curl -s --max-time 15 -X POST \"http://localhost:5050/api/trpc/reservation.create\" -H \"Content-Type: application/json\" -d '{\"json\":{\"name\":\"Test Booking\",\"phone\":\"0400111222\",\"date\":\"2026-06-20\",\"time\":\"7:00 PM\",\"guests\":4,\"notes\":\"Window seat please\"}}')"
     ]
   }
 }

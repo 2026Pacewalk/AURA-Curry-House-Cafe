@@ -3,6 +3,7 @@ import { createRouter, publicQuery, adminQuery } from "./middleware";
 import { getDb } from "./queries/connection";
 import { reservations } from "@db/schema";
 import { eq, desc } from "drizzle-orm";
+import { notifyNewReservation } from "./lib/notifications";
 
 export const reservationRouter = createRouter({
   list: adminQuery.query(async () => {
@@ -31,7 +32,12 @@ export const reservationRouter = createRouter({
     .mutation(async ({ input }) => {
       const db = getDb();
       const result = await db.insert(reservations).values(input);
-      return { id: Number(result[0].insertId) };
+      const reservationId = Number(result[0].insertId);
+
+      // Notify the owner (fire-and-forget — never block/break the booking).
+      void notifyNewReservation({ id: reservationId, ...input }).catch(() => {});
+
+      return { id: reservationId };
     }),
 
   updateStatus: adminQuery

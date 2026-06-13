@@ -4,6 +4,7 @@ import { createRouter, publicQuery, adminQuery } from "./middleware";
 import { getDb } from "./queries/connection";
 import { orders, menuItems } from "@db/schema";
 import { eq, desc, inArray } from "drizzle-orm";
+import { notifyNewOrder } from "./lib/notifications";
 
 const GST_RATE = 0.1;
 
@@ -78,7 +79,23 @@ export const orderRouter = createRouter({
         tax: tax.toFixed(2),
         total: total.toFixed(2),
       });
-      return { id: Number(result[0].insertId) };
+      const orderId = Number(result[0].insertId);
+
+      // Notify the owner (fire-and-forget — never block/break the order).
+      void notifyNewOrder({
+        id: orderId,
+        customerName: input.customerName,
+        customerMobile: input.customerMobile,
+        customerAddress: input.customerAddress,
+        deliveryType: input.deliveryType,
+        notes: input.notes,
+        items: priced.map((p) => ({ name: p.name, price: p.price, quantity: p.quantity })),
+        subtotal: subtotal.toFixed(2),
+        tax: tax.toFixed(2),
+        total: total.toFixed(2),
+      }).catch(() => {});
+
+      return { id: orderId };
     }),
 
   updateStatus: adminQuery
