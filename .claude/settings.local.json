@@ -83,7 +83,10 @@
       "Bash(node scripts/apply-category-images.mjs)",
       "Bash(curl -s --max-time 15 -X POST \"http://localhost:5050/api/trpc/reservation.create\" -H \"Content-Type: application/json\" -d '{\"json\":{\"name\":\"Test Booking\",\"phone\":\"0400111222\",\"date\":\"2026-06-20\",\"time\":\"7:00 PM\",\"guests\":4,\"notes\":\"Window seat please\"}}')",
       "Bash(git fetch *)",
-      "mcp__plugin_railway_railway__list_deployments"
+      "mcp__plugin_railway_railway__list_deployments",
+      "Bash(awk '{print $1}')",
+      "Bash(node -e \"const m=require\\('./scripts/gen-image-urls.json'\\);const v=Object.values\\(m\\);const seen={};let dup=false;for\\(const[k,u]of Object.entries\\(m\\)\\){if\\(seen[u]\\){console.log\\('DUP URL:',seen[u],'and',k\\);dup=true}seen[u]=k}if\\(!dup\\)console.log\\('no duplicate URLs'\\)\")",
+      "Bash(node scripts/montage.mjs)"
     ]
   }
 }

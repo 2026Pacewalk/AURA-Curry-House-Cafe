@@ -87,7 +87,7 @@ export default function MobileHome() {
           {(bestSellers || []).slice(0, 6).map(item => (
             <div key={item.id} className="snap-start shrink-0 rounded-xl overflow-hidden" style={{ width: '160px', background: '#111', border: '1px solid rgba(245,240,232,0.06)' }}>
               <div className="relative h-[120px] overflow-hidden">
-                <img src={catIcons[['quick-snacks','south-indian','north-indian','indo-chinese','biryani','desserts','beverages'][item.categoryId - 1] || 'south-indian']} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
+                <img src={item.image || catIcons[['quick-snacks','south-indian','north-indian','indo-chinese','biryani','desserts','beverages'][item.categoryId - 1] || 'south-indian']} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#111] to-transparent" />
                 <div className="absolute top-2 right-2 flex flex-col gap-1 items-end">
                   {item.isBestSeller && <span className="px-1.5 py-0.5 rounded-[3px] text-[7px] font-bold tracking-wider bg-[#c9a84c] text-white shadow-md">BESTSELLER</span>}
@@ -124,7 +124,7 @@ export default function MobileHome() {
           {(featured || []).slice(0, 4).map(item => (
             <div key={item.id} className="flex gap-3 p-2.5 rounded-xl" style={{ background: '#111', border: '1px solid rgba(245,240,232,0.05)' }}>
               <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0 self-center">
-                <img src={catIcons[['quick-snacks','south-indian','north-indian','indo-chinese','biryani','desserts','beverages'][item.categoryId - 1] || 'south-indian']} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
+                <img src={item.image || catIcons[['quick-snacks','south-indian','north-indian','indo-chinese','biryani','desserts','beverages'][item.categoryId - 1] || 'south-indian']} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div className="flex-1 min-w-0 py-0.5">
                 <div className="flex items-center gap-1.5">
