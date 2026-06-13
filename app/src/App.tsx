@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router';
 import { CartProvider } from './hooks/useCart';
 import { useIsMobile } from './hooks/useIsMobile';
+import { useAuth } from './hooks/useAuth';
 import TopBar from './components/TopBar';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -10,7 +11,17 @@ import MenuPage from './pages/MenuPage';
 import CheckoutPage from './pages/CheckoutPage';
 import AdminPage from './pages/AdminPage';
 import CreditsPage from './pages/CreditsPage';
+import Login from './pages/Login';
 import NotFound from './pages/NotFound';
+
+function RequireAdmin() {
+  const { user, isLoading } = useAuth();
+  if (isLoading) {
+    return <div className="min-h-screen flex items-center justify-center text-sand text-sm">Loading…</div>;
+  }
+  if (user?.role !== 'admin') return <Login />;
+  return <AdminPage />;
+}
 
 /* Mobile Components */
 import MobileHeader from './components/mobile/MobileHeader';
@@ -27,7 +38,8 @@ function DesktopLayout() {
           <Route path="/" element={<HomePage />} />
           <Route path="/menu" element={<MenuPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/admin" element={<RequireAdmin />} />
           <Route path="/credits" element={<CreditsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
@@ -46,7 +58,8 @@ function MobileLayout() {
           <Route path="/" element={<HomePage />} />
           <Route path="/menu" element={<MenuPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/admin" element={<RequireAdmin />} />
           <Route path="/credits" element={<CreditsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
