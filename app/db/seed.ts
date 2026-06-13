@@ -14,7 +14,7 @@ async function seed() {
     { name: "South Indian", slug: "south-indian", description: "Dosa, Idli, Vada & More", image: "/images/cat-south-indian.jpg", sortOrder: 2, active: true },
     { name: "North Indian", slug: "north-indian", description: "Curries & Breads", image: "/images/cat-north-indian.jpg", sortOrder: 3, active: true },
     { name: "Indo Chinese", slug: "indo-chinese", description: "Noodles & Manchurian", image: "/images/cat-indo-chinese.jpg", sortOrder: 4, active: true },
-    { name: "Biryani", slug: "biryani", description: "Aromatic rice dishes", image: "/images/hero-main.jpg", sortOrder: 5, active: true },
+    { name: "Biryani", slug: "biryani", description: "Aromatic rice dishes", image: "/images/cat-biryani.jpg", sortOrder: 5, active: true },
     { name: "Desserts", slug: "desserts", description: "Sweet Delights", image: "/images/cat-desserts.jpg", sortOrder: 6, active: true },
     { name: "Beverages", slug: "beverages", description: "Shakes, Lassi & More", image: "/images/cat-beverages.jpg", sortOrder: 7, active: true },
   ]);
